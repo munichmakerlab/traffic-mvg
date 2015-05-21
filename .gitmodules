@@ -1,0 +1,3 @@
+[submodule "PyMVGLive"]
+	path = PyMVGLive
+	url = https://github.com/pc-coholic/PyMVGLive.git
