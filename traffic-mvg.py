@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
-from .PyMVGLive.MVGLive import MVGLive
+import MVGLive
 import time
+import config
 
 topic_red = "mumalab/room/trafficlight/red"
 topic_yellow = "mumalab/room/trafficlight/yellow"
