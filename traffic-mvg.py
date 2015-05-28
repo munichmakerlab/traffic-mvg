@@ -18,8 +18,6 @@ def on_disconnect(client, userdata, rc):
 def on_log(client, userdata, level, buf):
 	print(buf)
 
-prev = 0
-
 mqttc = mqtt.Client("")
 mqttc.username_pw_set(config.username, config.password)
 # mqttc.connect(config.host, config.port, 60)
@@ -71,14 +69,12 @@ def refresh():
 	r = requests.get(url)
 	j =  r.json()
 	if j[u'door'] == "open":
-		push_u()
+		push_ubahn()
 	else:
 		set_traffic_light(0)
 
 
-def push_u(): # Pushes the Lines to the Display
-	# TODO: look at http://status.munichmakerlab.de/simple.php
-
+def push_ubahn(): # Pushes the Lines to the Display
 	lifedata = None
 	lifedata = foo.getlivedata("Obersendling")
 	reduced_lifedata = []
@@ -116,7 +112,7 @@ try:
 		set_single_light(2, False)
 		set_single_light(3, False)
 		while True:
-				prev = refresh()
+				refresh()
 				time.sleep(10)
 except KeyboardInterrupt:
 		print 'interrupted!'
