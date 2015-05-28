@@ -76,7 +76,7 @@ linename_s = "S7"
 
 def refresh():
 	# get space status from web api
-	r = requests.get(config.config.url)
+	r = requests.get(config.url)
 	j =  r.json()
 	if j[u'door'] == "open":
 		## Always push U-Bahn for now.
