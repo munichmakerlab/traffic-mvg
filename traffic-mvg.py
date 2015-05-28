@@ -3,11 +3,6 @@ import MVGLive
 import time
 import config
 import requests
-url = "http://status.munichmakerlab.de/api.php"
-
-topic_red = "mumalab/room/trafficlight/red"
-topic_yellow = "mumalab/room/trafficlight/yellow"
-topic_green = "mumalab/room/trafficlight/green"
 
 def on_connect(mosq, obj, rc):
 	print("Connect with RC " + str(rc))
@@ -39,13 +34,13 @@ def set_single_light(light, state):
 	global state_3
 
 	if light == 1 and state_1 != state:
-		mqttc.publish(topic_red, int(state), 1, False)
+		mqttc.publish(config.topic_red, int(state), 1, False)
 		state_1 = state
 	elif light == 2 and state_2 != state:
-		mqttc.publish(topic_yellow, int(state), 1, False)
+		mqttc.publish(config.topic_yellow, int(state), 1, False)
 		state_2 = state
 	elif light == 3 and state_3 != state:
-		mqttc.publish(topic_green, int(state), 1, False)
+		mqttc.publish(config.topic_green, int(state), 1, False)
 		state_3 = state
 
 # Sets the traffic light to (only) off, red, yellow, green
@@ -81,7 +76,7 @@ linename_s = "S7"
 
 def refresh():
 	# get space status from web api
-	r = requests.get(url)
+	r = requests.get(config.config.url)
 	j =  r.json()
 	if j[u'door'] == "open":
 		## Always push U-Bahn for now.
