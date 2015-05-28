@@ -1,0 +1,12 @@
+# MQTT config
+username = "*****"
+password = "****"
+host = "mqtt.tiefpunkt.com"
+port = ****
+
+topic_red = "mumalab/room/trafficlight/red"
+topic_yellow = "mumalab/room/trafficlight/yellow"
+config.topic_green = "mumalab/room/trafficlight/green"
+
+# Space Status Api
+url = "http://status.munichmakerlab.de/api.php"
