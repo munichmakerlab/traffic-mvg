@@ -32,6 +32,7 @@ state_2 = True
 state_3 = True
 
 
+# Sets light to state (Only sends MQTT message if state changed)
 def set_single_light(light, state):
 	global state_1
 	global state_2
@@ -47,6 +48,7 @@ def set_single_light(light, state):
 		mqttc.publish(topic_green, int(state), 1, False)
 		state_3 = state
 
+# Sets the traffic light to (only) off, red, yellow, green
 def set_traffic_light(light):
 	if light == 0:
 		set_single_light(1, False)
@@ -65,17 +67,7 @@ def set_traffic_light(light):
 		set_single_light(2, False)
 		set_single_light(3, True)
 
-def refresh():
-	r = requests.get(url)
-	j =  r.json()
-	if j[u'door'] == "open":
-		## Always push U-Bahn for now.
-		push(station_u, linename_u, destination_u, walking_time_u)
-	else:
-		set_traffic_light(0)
-
 ## Values for U-Bahn
-
 station_u = "Obersendling"
 linename_u = "U3"
 destination_u = "Moosach"
@@ -86,6 +78,17 @@ walking_time_u = 5
 station_s = "Siemenswerke"
 linename_s = "S7"
 ## TODO: Finish
+
+def refresh():
+	# get space status from web api
+	r = requests.get(url)
+	j =  r.json()
+	if j[u'door'] == "open":
+		## Always push U-Bahn for now.
+		push(station_u, linename_u, destination_u, walking_time_u)
+	else:
+		set_traffic_light(0)
+
 
 
 def push(station, linename, destination, walking_time): # Pushes the Lines to the Display
@@ -122,6 +125,7 @@ mqttc.connect(config.host, config.port, 60)
 
 try:
 		print("Entered loop")
+		# reset all lights to off
 		set_single_light(1, False)
 		set_single_light(2, False)
 		set_single_light(3, False)
