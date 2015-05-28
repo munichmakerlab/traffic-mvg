@@ -69,30 +69,44 @@ def refresh():
 	r = requests.get(url)
 	j =  r.json()
 	if j[u'door'] == "open":
-		push_ubahn()
+		## Always push U-Bahn for now.
+		push(station_u, linename_u, destination_u, walking_time_u)
 	else:
 		set_traffic_light(0)
 
+## Values for U-Bahn
 
-def push_ubahn(): # Pushes the Lines to the Display
+station_u = "Obersendling"
+linename_u = "U3"
+destination_u = "Moosach"
+walking_time_u = 5
+
+## Values for S-Bahn
+
+station_s = "Siemenswerke"
+linename_s = "S7"
+## TODO: Finish
+
+
+def push(station, linename, destination, walking_time): # Pushes the Lines to the Display
 	lifedata = None
-	lifedata = foo.getlivedata("Obersendling")
+	lifedata = foo.getlivedata(station)
 	reduced_lifedata = []
 
 	for entry in lifedata:
-		if entry["linename"] == u"U3" and entry["destination"] == u"Moosach":
+		if entry["linename"] == linename and entry["destination"] == destination:
 			reduced_lifedata.append(entry)
 
 	dept = reduced_lifedata[0]
 
 	print dept["time"]
 
-	if dept["time"] < 7 and dept["time"] > 5:
+	if dept["time"] < walking_time + 2 and dept["time"] > walking_time:
 		print "green"
 		set_traffic_light(3)
 		return 3
 
-	elif dept["time"] <= 5 and dept["time"] >= 4:
+	elif dept["time"] <= walking_time and dept["time"] >= walking_time -1:
 		print "yellow"
 		set_traffic_light(2)
 		return 2
