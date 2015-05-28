@@ -97,6 +97,7 @@ def push(station, linename, destination, walking_time): # Pushes the Lines to th
 
 	dept = reduced_lifedata[0]
 
+	mqttc.connect(config.host, config.port, 60)
 	print dept["time"]
 
 	if dept["time"] < walking_time + 2 and dept["time"] > walking_time:
@@ -114,9 +115,10 @@ def push(station, linename, destination, walking_time): # Pushes the Lines to th
 		set_traffic_light(1)
 		return 1
 
+	mqttc.disconnect()
+
 # Loop
 
-mqttc.connect(config.host, config.port, 60)
 
 try:
 		print("Entered loop")
