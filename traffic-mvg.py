@@ -95,6 +95,10 @@ def push(station, linename, destination, walking_time): # Pushes the Lines to th
 		if entry["linename"] == linename and entry["destination"] == destination:
 			reduced_lifedata.append(entry)
 
+	if not reduced_lifedata:
+		print "No more U-Bahns?"
+		set_traffic_light(0)
+		return
 	dept = reduced_lifedata[0]
 
 	mqttc.connect(config.host, config.port, 60)
@@ -123,9 +127,11 @@ def push(station, linename, destination, walking_time): # Pushes the Lines to th
 try:
 		print("Entered loop")
 		# reset all lights to off
+		mqttc.connect(config.host, config.port, 60)
 		set_single_light(1, False)
 		set_single_light(2, False)
 		set_single_light(3, False)
+		mqttc.disconnect()
 		while True:
 				refresh()
 				time.sleep(10)
