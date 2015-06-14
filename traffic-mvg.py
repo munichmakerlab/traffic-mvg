@@ -146,8 +146,8 @@ def loop():
 		print 'interrupted!'
 		mqttc.disconnect()
 
-	#except (requests.exceptions.ConnectionError):
-	except Exception
+	except (requests.exceptions.ConnectionError):
+	#except Exception
 		time.sleep(10)
 		loop()
 
