@@ -61,6 +61,10 @@ def set_traffic_light(light):
 		set_single_light(1, False)
 		set_single_light(2, False)
 		set_single_light(3, True)
+	elif light == 4:
+		set_traffic_light(1, True)
+		set_traffic_light(2, True)
+		set_traffic_light(3, False)
 
 ## Values for U-Bahn
 station_u = "Obersendling"
@@ -104,37 +108,47 @@ def push(station, linename, destination, walking_time): # Pushes the Lines to th
 	mqttc.connect(config.host, config.port, 60)
 	print dept["time"]
 
-	if dept["time"] < walking_time + 2 and dept["time"] > walking_time:
+	if dept["time"] < walking_time + 3 and dept["time"] > walking_time +2:
+		print "redyellow"
+		set_traffic_light(4)
+
+	elif dept["time"] < walking_time + 2 and dept["time"] > walking_time:
 		print "green"
 		set_traffic_light(3)
-		return 3
 
 	elif dept["time"] <= walking_time and dept["time"] >= walking_time -1:
 		print "yellow"
 		set_traffic_light(2)
-		return 2
 
 	else:
 		print "red"
 		set_traffic_light(1)
-		return 1
 
 	mqttc.disconnect()
 
 # Loop
 
+def init():
+	mqttc.connect(config.host, config.port, 60)
+	set_single_light(1, False)
+	set_single_light(2, False)
+	set_single_light(3, False)
+	mqttc.disconnect()
 
-try:
+def loop():
+	try:
+		init()
 		print("Entered loop")
-		# reset all lights to off
-		mqttc.connect(config.host, config.port, 60)
-		set_single_light(1, False)
-		set_single_light(2, False)
-		set_single_light(3, False)
-		mqttc.disconnect()
 		while True:
-				refresh()
-				time.sleep(10)
-except KeyboardInterrupt:
+			refresh()
+			time.sleep(10)
+	except KeyboardInterrupt:
 		print 'interrupted!'
 		mqttc.disconnect()
+
+	#except (requests.exceptions.ConnectionError):
+	except Exception
+		time.sleep(10)
+		loop()
+
+loop()
