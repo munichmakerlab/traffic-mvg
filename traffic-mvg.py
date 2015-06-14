@@ -22,6 +22,8 @@ mqttc.on_log = on_log
 
 foo = MVGLive.MVGLive()
 
+state = "000"
+
 state_1 = True
 state_2 = True
 state_3 = True
@@ -45,26 +47,23 @@ def set_single_light(light, state):
 
 # Sets the traffic light to (only) off, red, yellow, green
 def set_traffic_light(light):
-	if light == 0:
-		set_single_light(1, False)
-		set_single_light(2, False)
-		set_single_light(3, False)
-	elif light == 1:
-		set_single_light(1, True)
-		set_single_light(2, False)
-		set_single_light(3, False)
-	elif light == 2:
-		set_single_light(1, False)
-		set_single_light(2, True)
-		set_single_light(3, False)
-	elif light == 3:
-		set_single_light(1, False)
-		set_single_light(2, False)
-		set_single_light(3, True)
-	elif light == 4:
-		set_traffic_light(1, True)
-		set_traffic_light(2, True)
-		set_traffic_light(3, False)
+	global state
+	if light == 0 and state != "000":
+		mqttc.publish(config.topic_ryg, "000", 1, False)
+		state = "000"
+	elif light == 1 and state != "100":
+		mqttc.publish(config.topic_ryg, "100", 1, False)
+		state = "100"
+	elif light == 2 and state != "010":
+		mqttc.publish(config.topic_ryg, "010", 1, False)
+		state = "010"
+	elif light == 3 and state != "001":
+		mqttc.publish(config.topic_ryg, "001", 1, False)
+		state = "001"
+	elif light == 4 and state != "110":
+		mqttc.publish(config.topic_ryg, "110", 1, False)
+		state = "110"
+
 
 ## Values for U-Bahn
 station_u = "Obersendling"
@@ -108,15 +107,15 @@ def push(station, linename, destination, walking_time): # Pushes the Lines to th
 	mqttc.connect(config.host, config.port, 60)
 	print dept["time"]
 
-	if dept["time"] < walking_time + 3 and dept["time"] > walking_time +2:
+	if dept["time"] == 7:
 		print "redyellow"
 		set_traffic_light(4)
 
-	elif dept["time"] < walking_time + 2 and dept["time"] > walking_time:
+	elif dept["time"] == 6 or dept["time"] == 5:
 		print "green"
 		set_traffic_light(3)
 
-	elif dept["time"] <= walking_time and dept["time"] >= walking_time -1:
+	elif dept["time"] == 4:
 		print "yellow"
 		set_traffic_light(2)
 
