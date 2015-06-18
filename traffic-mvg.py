@@ -79,7 +79,13 @@ linename_s = "S7"
 
 def refresh():
 	# get space status from web api
-	r = requests.get(config.url)
+	try:
+		r = requests.get(config.url)
+	except Exception as e:
+		print("Couldn't get space status. Retrying...")
+		time.sleep(5)
+		return False
+
 	j =  r.json()
 	if j[u'door'] == "open":
 		## Always push U-Bahn for now.
@@ -91,7 +97,13 @@ def refresh():
 
 def push(station, linename, destination, walking_time): # Pushes the Lines to the Display
 	lifedata = None
-	lifedata = foo.getlivedata(station)
+	try:
+		lifedata = foo.getlivedata(station)
+	except Exception as e:
+		print("Failed to get station data")
+		time.sleep(5)
+		return False
+
 	reduced_lifedata = []
 
 	for entry in lifedata:
@@ -104,7 +116,13 @@ def push(station, linename, destination, walking_time): # Pushes the Lines to th
 		return
 	dept = reduced_lifedata[0]
 
-	mqttc.connect(config.host, config.port, 60)
+	try:
+		mqttc.connect(config.host, config.port, 60)
+	except Exception as e:
+		print("Failed to connect to mqtt. Retrying...")
+		time.sleep(5)
+		return False
+
 	print dept["time"]
 
 	if dept["time"] == 7:
@@ -128,26 +146,24 @@ def push(station, linename, destination, walking_time): # Pushes the Lines to th
 # Loop
 
 def init():
-	mqttc.connect(config.host, config.port, 60)
+	try:
+		mqttc.connect(config.host, config.port, 60)
+	except Exception as e:
+		return false
 	set_single_light(1, False)
 	set_single_light(2, False)
 	set_single_light(3, False)
 	mqttc.disconnect()
+	return True
 
-def loop():
-	try:
-		init()
-		print("Entered loop")
-		while True:
-			refresh()
-			time.sleep(10)
-	except KeyboardInterrupt:
-		print 'interrupted!'
-		mqttc.disconnect()
-
-	except (requests.exceptions.ConnectionError):
-	#except Exception
+try:
+	while not init():
+		print("Couldn't connect... retrying")
+		time.sleep(5)
+	print("Entered loop")
+	while True:
+		refresh()
 		time.sleep(10)
-		loop()
-
-loop()
+except KeyboardInterrupt:
+	print 'interrupted!'
+	mqttc.disconnect()
