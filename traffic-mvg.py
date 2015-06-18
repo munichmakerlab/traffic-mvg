@@ -91,7 +91,13 @@ def refresh():
 		## Always push U-Bahn for now.
 		push(station_u, linename_u, destination_u, walking_time_u)
 	else:
+		try:
+			mqttc.connect(config.host, config.port, 60)
+		except Exception as e:
+			return false			
 		set_traffic_light(0)
+
+		mqttc.disconnect()
 
 
 
