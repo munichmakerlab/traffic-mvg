@@ -125,15 +125,15 @@ def push(station, linename, destination, walking_time): # Pushes the Lines to th
 
 	print dept["time"]
 
-	if dept["time"] == 7:
+	if dept["time"] == 8:
 		print "redyellow"
 		set_traffic_light(4)
 
-	elif dept["time"] == 6 or dept["time"] == 5:
+	elif dept["time"] == 7 or dept["time"] == 6:
 		print "green"
 		set_traffic_light(3)
 
-	elif dept["time"] == 4:
+	elif dept["time"] == 5:
 		print "yellow"
 		set_traffic_light(2)
 
