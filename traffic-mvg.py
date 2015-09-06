@@ -94,7 +94,7 @@ def refresh():
 		try:
 			mqttc.connect(config.host, config.port, 60)
 		except Exception as e:
-			return false			
+			return False
 		set_traffic_light(0)
 
 		mqttc.disconnect()
@@ -155,7 +155,7 @@ def init():
 	try:
 		mqttc.connect(config.host, config.port, 60)
 	except Exception as e:
-		return false
+		return False
 	set_single_light(1, False)
 	set_single_light(2, False)
 	set_single_light(3, False)
