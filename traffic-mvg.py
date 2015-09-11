@@ -76,7 +76,7 @@ def set_traffic_light(light):
 
 def connect_once():
 	try:
-		mqttc.connect(config.host, config.port, 60)
+		mqttc.reconnect()
 	except Exception as e:
 		print("Failed to connect to mqtt. Retrying...")
 		time.sleep(5)
@@ -109,7 +109,7 @@ def refresh():
 		push(station_u, linename_u, destination_u, walking_time_u)
 	else:
 		try:
-			mqttc.connect(config.host, config.port, 60)
+			mqttc.reconnect()
 		except Exception as e:
 			return False
 		set_traffic_light(0)
